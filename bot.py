@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import discord
 from discord.ext import commands
 
+import when
 
 HELP_MSG = "To find out when we playing type: '!when'"
 CMD_PREFIX = "!"
@@ -23,7 +24,7 @@ async def on_ready() -> None:
 
 @bot.command( name="when", help=HELP_MSG )
 async def time_table( ctx ) -> None:
-    response = "When who asked!"
+    response = f"Today we're playing at: {when.get_time_today()}"
     await ctx.send( response )
 
 bot.run(TOKEN)
