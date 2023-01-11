@@ -23,7 +23,7 @@ async def on_ready() -> None:
 
 @bot.command( name="when", help=HELP_MSG )
 async def time_table( ctx ) -> None:
-    response = "Halo"
+    response = "When who asked!"
     await ctx.send( response )
 
 bot.run(TOKEN)
