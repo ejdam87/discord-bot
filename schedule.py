@@ -4,7 +4,7 @@ from datetime import date
 PATH = "schedule.json"
 
 ERROR_MSG = "!when [set] <day_name> <time> / !when [get] <day_name>"
-
+HELP_MSG = "To find out when we playing type: '!when'"
 
 def get_timetable() -> dict[ str, str ]:
     with open( PATH, "r" ) as f:

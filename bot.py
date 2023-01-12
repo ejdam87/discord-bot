@@ -8,12 +8,11 @@ from discord.ext import commands
 
 ## --- APPS
 import schedule
+import randpick
 ## ---
 
 
 Ctx_type = discord.ext.commands.Context
-
-HELP_MSG = "To find out when we playing type: '!when'"
 CMD_PREFIX = "!"
 
 load_dotenv()
@@ -30,7 +29,7 @@ async def on_ready() -> None:
     print( "Bot has connected to Discord!" )
 
 
-@bot.command( name="when", help=HELP_MSG )
+@bot.command( name="when", help=schedule.HELP_MSG )
 async def time_table( ctx: Ctx_type, *args: str ) -> None:
 
     if len( args ) == 2 and args[ 0 ]  == "get":
@@ -48,5 +47,15 @@ async def time_table( ctx: Ctx_type, *args: str ) -> None:
         response = schedule.ERROR_MSG
 
     await ctx.send( response )
+
+@bot.command( name="pick", help=randpick.HELP_MSG )
+async def picker( ctx: Ctx_type, *args: str ) -> None:
+
+    if len( args ) == 0:
+        await ctx.send( randpick.EMPTY_ERR )
+        return
+
+    picked = randpick.pick( list( args ) )
+    await ctx.send( picked )
 
 bot.run(TOKEN)
