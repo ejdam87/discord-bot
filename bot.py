@@ -1,14 +1,18 @@
 
-## --- ENV imports
-import os
-from dotenv import load_dotenv
+## --- Discord utils
 import discord
 from discord.ext import commands
 ## ---
 
+## --- ENV imports
+import os
+from dotenv import load_dotenv
+## ---
+
 ## --- APPS
-import schedule
-import randpick
+import apps.schedule as schedule
+import apps.randpick as randpick
+import apps.song     as song
 ## ---
 
 
@@ -29,6 +33,7 @@ async def on_ready() -> None:
     print( "Bot has connected to Discord!" )
 
 
+## --- TEXT
 @bot.command( name="when", help=schedule.HELP_MSG )
 async def time_table( ctx: Ctx_type, *args: str ) -> None:
 
@@ -58,4 +63,62 @@ async def picker( ctx: Ctx_type, *args: str ) -> None:
     picked = randpick.pick( list( args ) )
     await ctx.send( picked )
 
+## ---
+
+## --- VOICE
+@bot.command( name="join", help="" )
+async def join( ctx: Ctx_type, *args: str ) -> None:
+
+    v = ctx.message.author.voice
+    if not v:
+        ctx.send( "You are not connected to any voice channel" )
+        return
+
+    await ctx.send( f"I am joining {v.channel.name}" )
+    await v.channel.connect( )
+
+@bot.command( name="leave", help="" )
+async def leave( ctx: Ctx_type, *args: str ) -> None:
+
+    vc = ctx.message.guild.voice_client
+    if vc is not None:
+        await ctx.send( "Leaving voice channel" )
+        await ctx.message.guild.voice_client.disconnect()
+    else:
+        await ctx.send( "I am not connected to any voice channel" )
+
+@bot.command(name="pause", help="")
+async def pause( ctx: Ctx_type ) -> None:
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_playing():
+        voice_client.pause()
+    else:
+        await ctx.send("I am not playing anything at the moment")
+    
+@bot.command(name="resume", help="")
+async def resume( ctx: Ctx_type ) -> None:
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_paused():
+        voice_client.resume()
+    else:
+        await ctx.send("I am not playing anything at the moment")
+
+@bot.command(name="stop", help="")
+async def stop( ctx: Ctx_type ) -> None:
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_playing():
+        voice_client.stop()
+    else:
+        await ctx.send("I am not playing anything at the moment")
+
+@bot.command(name="play", help="")
+async def play( ctx: Ctx_type ) -> None:
+
+        server = ctx.message.guild
+        voice_channel = server.voice_client
+        filename = song.get_sound()
+        voice_channel.play( discord.FFmpegPCMAudio( executable="ffmpeg.exe", source=filename) )
+        await ctx.send( '**Now playing:** {}'.format(filename) )
+
+## ---
 bot.run(TOKEN)

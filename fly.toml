@@ -1,6 +1,6 @@
-# fly.toml file generated for dzadam-bot on 2023-01-12T17:04:17+01:00
+# fly.toml file generated for dzadam-bot-v2 on 2023-02-18T16:54:10+01:00
 
-app = "dzadam-bot"
+app = "dzadam-bot-v2"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
