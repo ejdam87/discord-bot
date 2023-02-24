@@ -10,18 +10,16 @@ from dotenv import load_dotenv
 ## ---
 
 ## --- APPS
-import apps.schedule as schedule
-import apps.randpick as randpick
-import apps.song     as song
+import apps.text.schedule as schedule
+import apps.text.randpick as randpick
+import apps.audio.yt      as yt
 ## ---
-
 
 Ctx_type = discord.ext.commands.Context
 CMD_PREFIX = "!"
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -71,7 +69,7 @@ async def join( ctx: Ctx_type, *args: str ) -> None:
 
     v = ctx.message.author.voice
     if not v:
-        ctx.send( "You are not connected to any voice channel" )
+        await ctx.send( "You are not connected to any voice channel" )
         return
 
     await ctx.send( f"I am joining {v.channel.name}" )
@@ -112,13 +110,13 @@ async def stop( ctx: Ctx_type ) -> None:
         await ctx.send("I am not playing anything at the moment")
 
 @bot.command(name="play", help="")
-async def play( ctx: Ctx_type ) -> None:
+async def play( ctx: Ctx_type, yt_query: str ) -> None:
+        voice_client = ctx.message.guild.voice_client
+        async with ctx.typing():
+            player = await yt.YTDLSource.from_query( yt_query, loop=bot.loop, stream=True )
+            voice_client.play( player, after=lambda e: print(f'Player error: {e}') if e else None )
 
-        server = ctx.message.guild
-        voice_channel = server.voice_client
-        filename = song.get_sound()
-        voice_channel.play( discord.FFmpegPCMAudio( executable="ffmpeg.exe", source=filename) )
-        await ctx.send( '**Now playing:** {}'.format(filename) )
+        await ctx.send(f'Now playing: {player.title}')
 
 ## ---
 bot.run(TOKEN)
