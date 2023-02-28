@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 ## --- APPS
 import apps.text.schedule as schedule
 import apps.text.randpick as randpick
+import apps.text.shop     as shop
 import apps.audio.yt      as yt
 ## ---
 
@@ -32,6 +33,32 @@ async def on_ready() -> None:
 
 
 ## --- TEXT
+@bot.command( name="shop", help="" )
+async def shoping( ctx: Ctx_type, *args: str ) -> None:
+    
+    response = "Query did not match any command!"
+
+    if len( args ) == 2 and args[ 0 ] == "add":
+        shop.push( args[ 1 ] )
+        response = "Successfully added!"
+
+    elif len( args ) == 2 and args[ 0 ] == "remove":
+        if args[ 1 ].isdecimal():
+            shop.remove_nth( int( args[ 1 ] ) )
+            response = "Successfully removed!"
+        else:
+            response = "Invalid number provided!"
+
+    elif len( args ) == 1 and args[ 0 ] == "reset":
+        shop.reset()
+        response = "Successfully reset!"
+
+    elif len( args ) == 1 and args[ 0 ] == "show":
+        lst = shop.fetch()
+        response = "empty" if len( lst ) == 0 else "\n".join( lst )
+
+    await ctx.send( response )
+
 @bot.command( name="when", help=schedule.HELP_MSG )
 async def time_table( ctx: Ctx_type, *args: str ) -> None:
 
@@ -85,38 +112,38 @@ async def leave( ctx: Ctx_type, *args: str ) -> None:
     else:
         await ctx.send( "I am not connected to any voice channel" )
 
-@bot.command(name="pause", help="")
+@bot.command( name="pause", help="" )
 async def pause( ctx: Ctx_type ) -> None:
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         voice_client.pause()
     else:
-        await ctx.send("I am not playing anything at the moment")
+        await ctx.send( "I am not playing anything at the moment" )
     
-@bot.command(name="resume", help="")
+@bot.command( name="resume", help="" )
 async def resume( ctx: Ctx_type ) -> None:
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_paused():
         voice_client.resume()
     else:
-        await ctx.send("I am not playing anything at the moment")
+        await ctx.send( "I am not playing anything at the moment" )
 
-@bot.command(name="stop", help="")
+@bot.command( name="stop", help="" )
 async def stop( ctx: Ctx_type ) -> None:
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         voice_client.stop()
     else:
-        await ctx.send("I am not playing anything at the moment")
+        await ctx.send( "I am not playing anything at the moment" )
 
-@bot.command(name="play", help="")
+@bot.command( name="play", help="" )
 async def play( ctx: Ctx_type, yt_query: str ) -> None:
         voice_client = ctx.message.guild.voice_client
         async with ctx.typing():
             player = await yt.YTDLSource.from_query( yt_query, loop=bot.loop, stream=True )
-            voice_client.play( player, after=lambda e: print(f'Player error: {e}') if e else None )
+            voice_client.play( player, after=lambda e: player.cleanup() )
 
-        await ctx.send(f'Now playing: {player.title}')
+        await ctx.send( f"**Playing now**: {player.title}" )
 
 ## ---
 bot.run(TOKEN)
