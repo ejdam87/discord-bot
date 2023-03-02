@@ -38,8 +38,9 @@ async def shoping( ctx: Ctx_type, *args: str ) -> None:
     
     response = "Query did not match any command!"
 
-    if len( args ) == 2 and args[ 0 ] == "add":
-        shop.push( args[ 1 ] )
+    if len( args ) >= 2 and args[ 0 ] == "add":
+        for arg in args[ 1: ]:
+            shop.push( arg )
         response = "Successfully added!"
 
     elif len( args ) == 2 and args[ 0 ] == "remove":
@@ -138,12 +139,12 @@ async def stop( ctx: Ctx_type ) -> None:
 
 @bot.command( name="play", help="" )
 async def play( ctx: Ctx_type, yt_query: str ) -> None:
-        voice_client = ctx.message.guild.voice_client
-        async with ctx.typing():
-            player = await yt.YTDLSource.from_query( yt_query, loop=bot.loop, stream=True )
-            voice_client.play( player, after=lambda e: player.cleanup() )
+    voice_client = ctx.message.guild.voice_client
+    async with ctx.typing():
+        player = await yt.YTDLSource.from_query( yt_query, loop=bot.loop, stream=True )
+        voice_client.play( player, after=lambda e: player.cleanup() )
 
-        await ctx.send( f"**Playing now**: {player.title}" )
+    await ctx.send( f"**Playing now**: {player.title}" )
 
 ## ---
 bot.run(TOKEN)

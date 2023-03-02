@@ -1,7 +1,8 @@
 import json
 from datetime import date
+import os
 
-PATH = "schedule.json"
+PATH = "/data/schedule.json"
 
 ERROR_MSG = "!when [set] <day_name> <time> / !when [get] <day_name>"
 HELP_MSG = "To find out when we playing type: '!when'"

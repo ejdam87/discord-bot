@@ -1,7 +1,8 @@
 import json
 from datetime import date
+import os
 
-SHOP_PATH = "shop.txt"
+SHOP_PATH = "/data/shop.txt"
 
 def fetch() -> list[ str ]:
     with open( SHOP_PATH, "r" ) as f:
