@@ -16,7 +16,7 @@ import apps.text.shop     as shop
 import apps.audio.yt      as yt
 ## ---
 
-Ctx_type = discord.ext.commands.Context
+Context = discord.ext.commands.Context
 CMD_PREFIX = "!"
 
 load_dotenv()
@@ -34,7 +34,7 @@ async def on_ready() -> None:
 
 ## --- TEXT
 @bot.command( name="shop", help="" )
-async def shoping( ctx: Ctx_type, *args: str ) -> None:
+async def shoping( ctx: Context, *args: str ) -> None:
     
     response = "Query did not match any command!"
 
@@ -61,7 +61,7 @@ async def shoping( ctx: Ctx_type, *args: str ) -> None:
     await ctx.send( response )
 
 @bot.command( name="when", help=schedule.HELP_MSG )
-async def time_table( ctx: Ctx_type, *args: str ) -> None:
+async def time_table( ctx: Context, *args: str ) -> None:
 
     if len( args ) == 2 and args[ 0 ]  == "get":
         day = args[ 1 ]
@@ -80,7 +80,7 @@ async def time_table( ctx: Ctx_type, *args: str ) -> None:
     await ctx.send( response )
 
 @bot.command( name="pick", help=randpick.HELP_MSG )
-async def picker( ctx: Ctx_type, *args: str ) -> None:
+async def picker( ctx: Context, *args: str ) -> None:
 
     if len( args ) == 0:
         await ctx.send( randpick.EMPTY_ERR )
@@ -93,28 +93,33 @@ async def picker( ctx: Ctx_type, *args: str ) -> None:
 
 ## --- VOICE
 @bot.command( name="join", help="" )
-async def join( ctx: Ctx_type, *args: str ) -> None:
+async def join( ctx: Context, *args: str ) -> None:
 
     v = ctx.message.author.voice
     if not v:
         await ctx.send( "You are not connected to any voice channel" )
         return
 
+    voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice_client is not None:
+        await ctx.send( "I am already connected to a voice channel" )
+        return
+
     await ctx.send( f"I am joining {v.channel.name}" )
     await v.channel.connect( )
 
 @bot.command( name="leave", help="" )
-async def leave( ctx: Ctx_type, *args: str ) -> None:
+async def leave( ctx: Context, *args: str ) -> None:
 
-    vc = ctx.message.guild.voice_client
-    if vc is not None:
+    voice_client = ctx.message.guild.voice_client
+    if voice_client is not None:
         await ctx.send( "Leaving voice channel" )
-        await ctx.message.guild.voice_client.disconnect()
+        await voice_client.disconnect()
     else:
         await ctx.send( "I am not connected to any voice channel" )
 
 @bot.command( name="pause", help="" )
-async def pause( ctx: Ctx_type ) -> None:
+async def pause( ctx: Context ) -> None:
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         voice_client.pause()
@@ -122,7 +127,7 @@ async def pause( ctx: Ctx_type ) -> None:
         await ctx.send( "I am not playing anything at the moment" )
     
 @bot.command( name="resume", help="" )
-async def resume( ctx: Ctx_type ) -> None:
+async def resume( ctx: Context ) -> None:
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_paused():
         voice_client.resume()
@@ -130,7 +135,7 @@ async def resume( ctx: Ctx_type ) -> None:
         await ctx.send( "I am not playing anything at the moment" )
 
 @bot.command( name="stop", help="" )
-async def stop( ctx: Ctx_type ) -> None:
+async def stop( ctx: Context ) -> None:
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         voice_client.stop()
@@ -138,7 +143,7 @@ async def stop( ctx: Ctx_type ) -> None:
         await ctx.send( "I am not playing anything at the moment" )
 
 @bot.command( name="play", help="" )
-async def play( ctx: Ctx_type, yt_query: str ) -> None:
+async def play( ctx: Context, yt_query: str ) -> None:
     voice_client = ctx.message.guild.voice_client
     async with ctx.typing():
         player = await yt.YTDLSource.from_query( yt_query, loop=bot.loop, stream=True )
