@@ -176,6 +176,19 @@ def on_song_end(error):
         voice_client = bot.voice_clients[0]
         player = queue.pop(0)
         voice_client.play(player, after=lambda e: on_song_end(e))
+
+@bot.command(name="pipik", help="Show your pipi size.")
+async def pipik(ctx: commands.Context) -> None:
+    user_name = ctx.message.author.display_name
+    if user_name == 'vilkyway':
+        await ctx.send(f"@{user_name} ma pipik o velkosti 6.23 cm (to viem presne).")
+    elif user_name == 'Elenka':
+        await ctx.send(f"@{user_name} ma pipik je enormny, giganticky, OBRO.")
+    else:
+        from random import uniform
+        size = round(uniform(5.00, 30.00), 2)
+        await ctx.send(f"@{user_name} ma pipik o velkosti {size} cm.")
+        
         
 ## ---
 bot.run(TOKEN)
