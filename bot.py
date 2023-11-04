@@ -183,7 +183,7 @@ async def pipik(ctx: commands.Context) -> None:
     if user_name == 'vilkyway':
         await ctx.send(f"@{user_name} ma pipik o velkosti 6.23 cm (to viem presne).")
     elif user_name == 'Elenka':
-        await ctx.send(f"@{user_name} ma pipik je enormny, giganticky, OBRO.")
+        await ctx.send(f"@{user_name} ma pipik enormny, giganticky, OBROVSKY.")
     else:
         from random import uniform
         size = round(uniform(5.00, 30.00), 2)
