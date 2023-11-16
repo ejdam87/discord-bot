@@ -142,14 +142,53 @@ async def stop( ctx: Context ) -> None:
     else:
         await ctx.send( "I am not playing anything at the moment" )
 
-@bot.command( name="play", help="" )
-async def play( ctx: Context, yt_query: str ) -> None:
+queue = []
+
+@bot.command(name="play", help="Play a song and add it to the queue.")
+async def play(ctx: Context, yt_query: str) -> None:
     voice_client = ctx.message.guild.voice_client
+
     async with ctx.typing():
-        player = await yt.YTDLSource.from_query( yt_query, loop=bot.loop, stream=True )
-        voice_client.play( player, after=lambda e: player.cleanup() )
+        player = await yt.YTDLSource.from_query(yt_query, loop=bot.loop, stream=True)
 
-    await ctx.send( f"**Playing now**: {player.title}" )
+        if voice_client.is_playing():
+            queue.append(player)
+            await ctx.send(f"**Added to queue**: {player.title}")
+        else:
+            voice_client.play(player, after=lambda e: on_song_end(e))
 
+            await ctx.send(f"**Playing now**: {player.title}")
+
+@bot.command(name="skip", help="Skip the current song.")
+async def skip(ctx: Context) -> None:
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_playing():
+        voice_client.stop()
+    else:
+        await ctx.send( "Mirko, sa co chces skipovat ked sa nic nehra" )
+        
+
+def on_song_end(error):
+    if error:
+        print(f'Error in song playback: {error}')
+
+    if queue:
+        voice_client = bot.voice_clients[0]
+        player = queue.pop(0)
+        voice_client.play(player, after=lambda e: on_song_end(e))
+
+@bot.command(name="pipik", help="Show your pipi size.")
+async def pipik(ctx: commands.Context) -> None:
+    user_name = ctx.message.author.display_name
+    if user_name == 'vilkyway':
+        await ctx.send(f"@{user_name} ma pipik o velkosti 6.23 cm (to viem presne).")
+    elif user_name == 'Elenka':
+        await ctx.send(f"@{user_name} ma pipik enormny, giganticky, OBROVSKY.")
+    else:
+        from random import uniform
+        size = round(uniform(5.00, 30.00), 2)
+        await ctx.send(f"@{user_name} ma pipik o velkosti {size} cm.")
+        
+        
 ## ---
 bot.run(TOKEN)
