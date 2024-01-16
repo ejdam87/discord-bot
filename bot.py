@@ -193,7 +193,7 @@ async def pipik(ctx: commands.Context) -> None:
         await ctx.send(f"@{user_name} ma pipik o velkosti {size} cm.")
 
 @bot.command(name="list", help="Show list of songs")
-async def skip(ctx: Context) -> None:
+async def my_list(ctx: Context) -> None:
     print_songs = ""
     for song in queue2:
         print_songs = string + song + "\n"
