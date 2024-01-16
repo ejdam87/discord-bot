@@ -143,6 +143,7 @@ async def stop( ctx: Context ) -> None:
         await ctx.send( "I am not playing anything at the moment" )
 
 queue = []
+queue2 = []
 
 @bot.command(name="play", help="Play a song and add it to the queue.")
 async def play(ctx: Context, yt_query: str) -> None:
@@ -153,6 +154,7 @@ async def play(ctx: Context, yt_query: str) -> None:
 
         if voice_client.is_playing():
             queue.append(player)
+            queue2.append(yt_query)
             await ctx.send(f"**Added to queue**: {player.title}")
         else:
             voice_client.play(player, after=lambda e: on_song_end(e))
@@ -176,6 +178,7 @@ def on_song_end(error):
         voice_client = bot.voice_clients[0]
         player = queue.pop(0)
         voice_client.play(player, after=lambda e: on_song_end(e))
+        queue2.pop(0)
 
 @bot.command(name="pipik", help="Show your pipi size.")
 async def pipik(ctx: commands.Context) -> None:
@@ -188,7 +191,14 @@ async def pipik(ctx: commands.Context) -> None:
         from random import uniform
         size = round(uniform(5.00, 30.00), 2)
         await ctx.send(f"@{user_name} ma pipik o velkosti {size} cm.")
-        
+
+@bot.command(name="list", help="Show list of songs")
+async def skip(ctx: Context) -> None:
+    print_songs = ""
+    for song in queue2:
+        print_songs = string + song + "\n"
+    await ctx.send(print_songs)
+    
         
 ## ---
 bot.run(TOKEN)
