@@ -1,6 +1,6 @@
 # Discord bot
 
-This is an implementation of discord bot with python discord [API](https://discordpy.readthedocs.io/en/stable/api.html).
+This is an implementation of discord bot with python discord [API](https://discordpy.readthedocs.io/en/stable/api.html)  currently deployed on [fly.io](https://fly.io/) platform.
 
 ## Disclaimer
 It is well suited for enhancements and modifications, but does not posses an ideal foundation for commercial parallel bot.
