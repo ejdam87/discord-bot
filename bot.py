@@ -10,10 +10,11 @@ from dotenv import load_dotenv
 ## ---
 
 ## --- APPS
-import apps.text.schedule as schedule
-import apps.text.randpick as randpick
-import apps.text.shop     as shop
-import apps.audio.yt      as yt
+import apps.text.schedule          as schedule
+import apps.text.randpick          as randpick
+import apps.text.shop              as shop
+import apps.audio.yt               as yt
+import apps.image.image_generation as imgen
 ## ---
 
 Context = discord.ext.commands.Context
@@ -21,6 +22,7 @@ CMD_PREFIX = "!"
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+HUGGINGFACE_TOKEN = os.getenv('HUGGINGFACE_TOKEN')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -91,7 +93,7 @@ async def picker( ctx: Context, *args: str ) -> None:
 
 ## ---
 
-## --- VOICE
+## --- AUDIO
 @bot.command( name="join", help="" )
 async def join( ctx: Context, *args: str ) -> None:
 
@@ -195,10 +197,22 @@ async def pipik(ctx: commands.Context) -> None:
 @bot.command(name="list", help="Show list of songs")
 async def my_list(ctx: Context) -> None:
     print_songs = ""
-    for song in queue2:
-        print_songs = string + song + "\n"
-    await ctx.send(print_songs)
-    
-        
+    for i, song in enumerate(queue2):
+        print_songs = print_songs + f"{i + 1}. **{song}**\n"
+
+    print_songs = print_songs if print_songs != "" else "The queue is empty!"
+    await ctx.send(print_songs)       
 ## ---
+
+## --- IMAGE
+@bot.command( name="draw", help=imgen.HELP_MSG )
+async def drawing( ctx: Context, *args: str ) -> None:
+    if len( args ) == 0:
+        await ctx.send( imgen.EMPTY_ERR )
+        return
+
+    res = imgen.generate( list( args )[0], HUGGINGFACE_TOKEN )
+    await ctx.send( file=discord.File(fp=res, filename='image.png') )
+## ---
+
 bot.run(TOKEN)

@@ -1,2 +1,4 @@
 flyctl launch	// first time
 flyctl deploy	// update ( for already launched app )
+
+/home/dzadam/.fly/bin/flyctl --> location of flyctl on my WSL

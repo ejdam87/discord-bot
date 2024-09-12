@@ -1,15 +1,14 @@
-# fly.toml file generated for dz6 on 2023-03-01T20:27:32+01:00
+# fly.toml app configuration file generated for dz7 on 2023-09-11T07:49:33+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "dz6"
+app = "dz7"
+primary_region = "cdg"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
-
-[env]
+kill_timeout = "5s"
 
 [experimental]
   auto_rollback = true
 
-[mounts]
-source="dz6"
-destination="/data"
+[build]
