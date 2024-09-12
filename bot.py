@@ -10,9 +10,7 @@ from dotenv import load_dotenv
 ## ---
 
 ## --- APPS
-import apps.text.schedule          as schedule
 import apps.text.randpick          as randpick
-import apps.text.shop              as shop
 import apps.audio.yt               as yt
 import apps.image.image_generation as imgen
 ## ---
@@ -35,52 +33,6 @@ async def on_ready() -> None:
 
 
 ## --- TEXT
-@bot.command( name="shop", help="" )
-async def shoping( ctx: Context, *args: str ) -> None:
-    
-    response = "Query did not match any command!"
-
-    if len( args ) >= 2 and args[ 0 ] == "add":
-        for arg in args[ 1: ]:
-            shop.push( arg )
-        response = "Successfully added!"
-
-    elif len( args ) == 2 and args[ 0 ] == "remove":
-        if args[ 1 ].isdecimal():
-            shop.remove_nth( int( args[ 1 ] ) )
-            response = "Successfully removed!"
-        else:
-            response = "Invalid number provided!"
-
-    elif len( args ) == 1 and args[ 0 ] == "reset":
-        shop.reset()
-        response = "Successfully reset!"
-
-    elif len( args ) == 1 and args[ 0 ] == "show":
-        lst = shop.fetch()
-        response = "empty" if len( lst ) == 0 else "\n".join( lst )
-
-    await ctx.send( response )
-
-@bot.command( name="when", help=schedule.HELP_MSG )
-async def time_table( ctx: Context, *args: str ) -> None:
-
-    if len( args ) == 2 and args[ 0 ]  == "get":
-        day = args[ 1 ]
-        when = schedule.get_playtime( day )
-        response = f"Playtime for {day}: {when}"
-
-    elif len( args ) == 3 and args[ 0 ] == "set":
-        day = args[ 1 ]
-        when = args[ 2 ]
-        schedule.set_playtime( day, when )
-        response = f"Playtime for {day} was set for: {when}"
-
-    else:
-        response = schedule.ERROR_MSG
-
-    await ctx.send( response )
-
 @bot.command( name="pick", help=randpick.HELP_MSG )
 async def picker( ctx: Context, *args: str ) -> None:
 
