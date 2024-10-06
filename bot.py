@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 ## --- APPS
 import apps.text.randpick          as randpick
+import apps.text.nameday           as nameday
 import apps.audio.yt               as yt
 import apps.image.image_generation as imgen
 ## ---
@@ -43,6 +44,18 @@ async def picker( ctx: Context, *args: str ) -> None:
     picked = randpick.pick( list( args ) )
     await ctx.send( picked )
 
+@bot.command( name="nameday", help=nameday.HELP_MSG )
+async def picker( ctx: Context, *args: str ) -> None:
+
+    if len( args ) == 0:
+        await ctx.send( nameday.get_nameday("sk") )
+    elif len( args ) == 1:
+        await ctx.send( nameday.get_nameday(args[0]) )
+    else:
+        if not ( args[1].isnumeric() and args[2].isnumeric() ):
+            await ctx.send( "Sefe skus prirodzene cisla zadat plz" )
+        else:
+            await ctx.send( nameday.get_nameday(args[0], int(args[1]), int(args[2])) )
 ## ---
 
 ## --- AUDIO
